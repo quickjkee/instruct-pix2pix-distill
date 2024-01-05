@@ -74,7 +74,6 @@ image = pipe(prompt=edit_instruction,
              num_inference_steps=4, 
              guidance_scale=2.0,
              image_guidance_scale=1.0,
-             generator=generator,
              ).images[0]
 ```
 <p align="center">
