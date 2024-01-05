@@ -115,7 +115,8 @@ init_image = load_image(url).resize((resolution, resolution))
 
 2. Initialize the pipelines
 ```Python
-from diffusers import StableDiffusionXLInstructPix2PixPipeline, AutoPipelineForText2Image, UNet2DConditionModel
+from diffusers import DiffusionPipeline, StableDiffusionXLInstructPix2PixPipeline, AutoPipelineForText2Image
+from diffusers import UNet2DConditionModel, LCMScheduler
 
 # InstructPix2Pix-XL with LCM specified scheduler
 pipe_p2p = StableDiffusionXLInstructPix2PixPipeline.from_pretrained(
@@ -124,6 +125,12 @@ pipe_p2p = StableDiffusionXLInstructPix2PixPipeline.from_pretrained(
        )
 pipe_p2p = pipe_p2p.to("cuda")
 pipe_p2p.scheduler = LCMScheduler.from_config(pipe_p2p.scheduler.config)
+
+# SDXL
+pipe_sd = DiffusionPipeline.from_pretrained(
+    "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, variant="fp16", use_safetensors=True
+)
+pipe_sd = pipe_sd.to("cuda")
 
 # ADD-XL (SDXL-Turbo)
 pipe_turbo = AutoPipelineForText2Image.from_pretrained("stabilityai/sdxl-turbo",
@@ -167,14 +174,13 @@ def adapt(pipe_p2p, pipe_distill, pipe_sd, weight=0.5):
 # Adapt InstructPix2Pix-XL using the selected distillation method
 adapt(pipe_p2p=pipe_p2p,
       pipe_distill=pipe_turbo, # or pipe_lcm
-      pipe_sd=pip_sd,
+      pipe_sd=pipe_sd,
       weight=0.5) 
 ```
 
 3. Run editing.
 ```Python
 edit_instruction = "Make it evening"
-
 edited_image = pipe_p2p(
         prompt=edit_instruction,
         image=init_image,
