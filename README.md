@@ -1,4 +1,7 @@
 # Fast InstructPix2Pix using Distilled Text-conditional Diffusion Models
+<a href="https://huggingface.co/spaces/dbaranchuk/instruct-p2p-distill">
+	    <img src='https://img.shields.io/badge/%F0%9F%A4%97%20Demo-Editing-orange' />
+</a>&nbsp;
 
 <p align="center">
 <img src="imgs/0.jpg" width="1080px"/>
